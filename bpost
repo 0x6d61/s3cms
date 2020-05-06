@@ -1,0 +1,22 @@
+#!/bin/sh
+
+REMOTE_DIR="/var/www/html/md"
+POST_REPO="$HOME/code/blog"
+
+usage() {
+    echo "bpost <markdown file>"
+    exit 2
+}
+
+if [ "_$1" = "_" ] ; then
+    usage
+else
+    NEW_MARKDOWN=$(cat $1 | sed "2i :create $(date +"%Y-%m-%d %H:%M:%S")")
+    printf "${NEW_MARKDOWN}" > $1 
+    scp $1 myserver:$REMOTE_DIR
+    cp $1 $POST_REPO
+    cd $POST_REPO                 &&
+    git add $1                    &&
+    git commit -m "add posted $1" &&
+    git push -u origin master     
+fi
