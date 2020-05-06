@@ -43,4 +43,5 @@ awk -v POST="$POST" '{
     }else{
         print $0
     }
-}'
+}'                                          |
+sed 's/<pre><code>/<pre style="background-color:#e9ecef"><code class="prettyprint">/'
