@@ -29,7 +29,6 @@ END{
         print body[i]
         }
 }')
-POST=$(printf "${POST}" | sed 's/\//\\\//g')
 
 #view
 echo 'Content-type: text/html'
