@@ -2,7 +2,6 @@
 
 REMOTE_DIR="/var/www/html/md"
 POST_REPO="$HOME/code/blog"
-
 usage() {
     echo "bpost <markdown file>"
     exit 2
@@ -11,12 +10,15 @@ usage() {
 if [ "_$1" = "_" ] ; then
     usage
 else
+    FILE=$(basename $1)
     cat $1 | sed "2i :create $(date +"%Y-%m-%d %H:%M:%S")" | awk '{print $0}' > tmp
     cat tmp > $1 && rm -f tmp
     scp $1 myserver:$REMOTE_DIR
-    cp $1 $POST_REPO
+    if [ ! -e "$POST_REPO/$1" ]; then
+        cp $1 $POST_REPO
+    fi
     cd $POST_REPO                 &&
-    git add $1                    &&
+    git add $FILE                 &&
     git commit -m "add posted $1" &&
     git push -u origin master     
 fi
