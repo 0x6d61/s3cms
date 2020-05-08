@@ -8,7 +8,11 @@ case $file in
     *)          file="./"$file  ;;
 esac
 
-cat "$file"                                                                 |
+cat "$file"  
+sed 's/\&/\&amp;/g'							                                |
+sed 's/"/\&quot;/g'						                                    |
+sed 's/</\&lt;/g'							                                |
+sed 's/>/\&gt;/g'	                                                        |
 sed 's/^# \(.*\)/<h1>\1<\/h1>/'                                             |
 sed 's/^### \(.*\)/<h3>\1<\/h3>/'                                           |
 sed 's/^\*\*\*$/<hr>/'                                                      |
@@ -52,7 +56,7 @@ sed 's/\*\(.*\)\*/<em>\1<\/em>/'                                           |
 sed 's/~~\(.*\)~~/<del>\1<\/del>/'                                         |
 sed 's/- - -/<hr>/'                                                        |
 sed 's/---/<hr>/'                                                          |
-sed 's/  /<br>/'                                                           |
+sed 's/  $/<br>/'                                                          |
 sed 's/```\(.*\)```/<pre><code>\1<\/code><\/pre>/'                         |
 awk '{
     a[NR]=$0
