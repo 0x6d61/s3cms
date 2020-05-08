@@ -8,11 +8,35 @@ case $file in
     *)          file="./"$file  ;;
 esac
 
-cat "$file"  
+cat "$file"                                                                 |
 sed 's/\&/\&amp;/g'							                                |
 sed 's/"/\&quot;/g'						                                    |
 sed 's/</\&lt;/g'							                                |
 sed 's/>/\&gt;/g'	                                                        |
+sed 's/```\(.*\)```/<pre><code>\1<\/code><\/pre>/'                          |
+awk '
+BEGIN{
+    code_flag=false
+}
+{
+    a[NR]=$0
+    if(match($0,"```") && a[NR-1] == "") {
+        a[NR]="<pre><code>"
+        code_flag=true
+    }else if($0 == "" && match(a[NR-1],"```")) {
+        a[NR-1]="</code></pre>"
+        code_flag=false
+    }
+    if(code_flag==true && !match($0,"```")) {
+        gsub("*", "\\&#042;", $0)
+        a[NR]=$0
+    }   
+}
+END{
+    for(i=0;i<length(a);i++) {
+        print a[i]
+    }
+}'                                                                          |
 sed 's/^# \(.*\)/<h1>\1<\/h1>/'                                             |
 sed 's/^### \(.*\)/<h3>\1<\/h3>/'                                           |
 sed 's/^\*\*\*$/<hr>/'                                                      |
@@ -56,18 +80,4 @@ sed 's/\*\(.*\)\*/<em>\1<\/em>/'                                           |
 sed 's/~~\(.*\)~~/<del>\1<\/del>/'                                         |
 sed 's/- - -/<hr>/'                                                        |
 sed 's/---/<hr>/'                                                          |
-sed 's/  $/<br>/'                                                          |
-sed 's/```\(.*\)```/<pre><code>\1<\/code><\/pre>/'                         |
-awk '{
-    a[NR]=$0
-    if(match($0,"```") && a[NR-1] == "") {
-        a[NR]="<pre><code>"
-    }else if($0 == "" && match(a[NR-1],"```")) {
-        a[NR-1]="</code></pre>"
-    }
-}
-END{
-    for(i=0;i<length(a);i++) {
-        print a[i]
-    }
-}'
+sed 's/  $/<br>/'                                                          
