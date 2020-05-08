@@ -11,8 +11,7 @@ usage() {
 if [ "_$1" = "_" ] ; then
     usage
 else
-    NEW_MARKDOWN=$(cat $1 | sed "2i :create $(date +"%Y-%m-%d %H:%M:%S")")
-    cat $1 | awk '{print $0}' > tmp
+    cat $1 | sed "2i :create $(date +"%Y-%m-%d %H:%M:%S")" | awk '{print $0}' > tmp
     cat tmp > $1 && rm -f tmp
     scp $1 myserver:$REMOTE_DIR
     cp $1 $POST_REPO
